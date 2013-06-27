@@ -16,28 +16,18 @@ function handler (request, response) {
 	});
 }
 
+var client_counter = 0
+
 io.sockets.on('connection', function(socket){
-	
+	client_counter++;
+
+	socket.on('disconnect', function(){
+		client_counter--;
+		socket.broadcast.emit('message', {text: 'a user disconnect, left ' + client_counter + ' users.', number: client_counter});
+	})
+
+	socket.emit('users', {number: client_counter})
+
+	socket.emit('message', {text: 'you have connected!', number: client_counter})
+	socket.broadcast.emit('message', {text: 'a new user joined us!!, and we have ' + client_counter + ' users', number: client_counter})
 })
-
-
-// var http = require('http');
-// var fs   = require('fs');
-
-// var server = http.createServer(function(request, response){
-// 	fs.readFile('./index.html', function(error, data){
-// 		if (error) {
-// 			response.writeHead(500);
-// 			return response.end('Server Error')
-// 		}
-
-// 		response.writeHead(200);
-// 		response.end(data, 'utf-8');
-// 	})
-// }).listen(3000);
-
-// var io = require('socket.io').listen(server);
-
-// io.sockets.on('connection', function(socket){
-
-// })
