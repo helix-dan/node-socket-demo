@@ -1,0 +1,16 @@
+{
+  "name": "node-socket-demo",
+  "version": "0.0.1",
+  "description": "node-socket-demo ================",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/helix-dan/node-socket-demo.git"
+  },
+  "dependencies": {
+    "socket.io": "~0.9.16"
+  },
+  "author": "helix-dan",
+  "license": "BSD",
+  "readmeFilename": "README.md",
+  "gitHead": "e62634d2d7d0fcad27fdef42514ea88bcbf0fbed"
+}
