@@ -19,6 +19,7 @@ function handler (request, response) {
 var client_counter = 0
 
 io.sockets.on('connection', function(socket){
+	console.log("##############some one come in###############")
 	client_counter++;
 
 	socket.on('disconnect', function(){
@@ -31,3 +32,8 @@ io.sockets.on('connection', function(socket){
 	socket.emit('message', {text: 'you have connected!', number: client_counter})
 	socket.broadcast.emit('message', {text: 'a new user joined us!!, and we have ' + client_counter + ' users', number: client_counter})
 })
+
+
+// io.disable('heartbeats', function(socket){
+// 	console.log("llllllllllllllll")
+// });
