@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>Socket.io Expo</title>
+  <title>Socket.io Expo</title>
 	</head>
 	<body>
 		<h2>i am</h2>
@@ -19,9 +18,15 @@
 		    alert(data.text);
 		  });
 
+		  function sendmsg(){
+		  	socket.emit("client_message", "fuck");
+		  }
+
 		  // socket.on('users', function (data) {
 		  //   count.innerHTML = data.number;	
 		  // });
 		</script>
+
+		<button onclick="sendmsg()">send message</button>
 	</body>
 </html>
