@@ -1,32 +1,36 @@
 <!DOCTYPE html>
 <html>
-  <title>Socket.io Expo</title>
+	<head>
+  		<title>Socket.io Expo</title>
+		<script src="http://localhost:3000/socket.io/socket.io.js"></script>
+		<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 	</head>
 	<body>
-		<h2>i am</h2>
-		<h3>we have:</h3><p id="count"><p><h3>users</h3>
-
-		<script src="/socket.io/socket.io.js"></script>
+		<div><h3>there is:</h3><h3 id="count"></h3><h3>users</h3></div>
+		
 		<script>
-		  var socket = io.connect('http://192.168.2.167');
-
+		  var socket = io.connect('http://192.168.2.167:3000');
 		  var count = document.getElementById('count');
-
 
 		  socket.on('message', function (data) {
 		  	count.innerHTML = data.number;
 		    alert(data.text);
 		  });
 
-		  function sendmsg(){
-		  	socket.emit("client_message", "fuck");
-		  }
+		  socket.on('share_message', function (data){
+		  	$("#show").text(data.text);
+		  })
 
-		  // socket.on('users', function (data) {
-		  //   count.innerHTML = data.number;	
-		  // });
+		  $(document).ready(function(){
+		  	  $("#btn").click(function(){
+			  	var str = $("#input").val();
+			  	socket.emit("client_message", str);
+			  });
+		  });
 		</script>
 
-		<button onclick="sendmsg()">send message</button>
+		<input id="input" type="text" name="send_message">Please input message</input>
+		<button id="btn">send message</button>
+		<div id="show"></div>
 	</body>
 </html>
