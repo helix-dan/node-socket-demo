@@ -1,4 +1,4 @@
-var io = require('socket.io').listen(3300);
+var io = require('socket.io').listen(3000);
 
 var client_counter = 0
 
@@ -13,7 +13,7 @@ io.sockets.on('connection', function(socket){
 
 	socket.on('client_message', function(data){
 		console.dir('@@@@@@@' + data + '@@@@@@@');
-		socket.emit('share_message', {text: 'you writen ' + data + ' just now'})
+		socket.emit('share_message', {text: 'from server ' + data + ' just now'})
 	});
 
 	socket.emit('message', {text: 'you have connected!', number: client_counter})
