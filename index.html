@@ -1,36 +1,38 @@
 <!DOCTYPE html>
 <html>
 	<head>
-  		<title>Socket.io Expo</title>
-		<script src="http://localhost:3000/socket.io/socket.io.js"></script>
-		<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+	    <title>Socket.io Expo</title>
+	    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 	</head>
 	<body>
-		<div><h3>there is:</h3><h3 id="count"></h3><h3>users</h3></div>
-		
 		<script>
-		  var socket = io.connect('http://192.168.2.167:3000');
-		  var count = document.getElementById('count');
+		    window.WebSocket = window.WebSocket || window.MozWebSocket;
 
-		  socket.on('message', function (data) {
-		  	count.innerHTML = data.number;
-		    alert(data.text);
-		  });
+		    var connection = new WebSocket('ws://127.0.0.1:3000');
 
-		  socket.on('share_message', function (data){
-		  	$("#show").text(data.text);
-		  })
+		    connection.onopen = function () {
+		        alert('Your connection is open and ready to use!');
+		    };
 
-		  $(document).ready(function(){
-		  	  $("#btn").click(function(){
-			  	var str = $("#input").val();
-			  	socket.emit("client_message", str);
-			  });
-		  });
+		    connection.onerror = function (error) {
+		        alser('You meet some error!')
+		    };
+
+		    connection.onmessage = function (message) {
+		        $("#show").text(message.data);
+		    };
+
+		    $(document).ready(function(){
+		    	$("#btn").click(function(){
+		    		var str = $("#input").val();
+		    		connection.send(str);
+		    	})
+		    })
 		</script>
-
-		<input id="input" type="text" name="send_message">Please input message</input>
-		<button id="btn">send message</button>
-		<div id="show"></div>
+		<center>
+			<input id="input" type="text" name="send_message"> Please input message</input><br /><br />
+			<button id="btn">send message</button><br /><br />
+			<div id="show"></div>
+		</center>
 	</body>
 </html>

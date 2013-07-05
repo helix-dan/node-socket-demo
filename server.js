@@ -1,21 +1,34 @@
-var io = require('socket.io').listen(3000);
+var WebSocketServer = require('websocket').server;
+var http            = require('http');
 
-var client_counter = 0
+var server = http.createServer(function(request, response){
 
-io.sockets.on('connection', function(socket){
-	console.log("###### some one come in ######");
-	client_counter++;
+});
 
-	socket.on('disconnect', function(){
-		client_counter--;
-		socket.broadcast.emit('message', {text: 'a user disconnect, left ' + client_counter + ' users.', number: client_counter});
+server.listen(3000, function(){
+	console.log('server listen on port 3000')
+});
+
+var wsServer = new WebSocketServer({
+	httpServer: server
+});
+
+wsServer.on('request', function(request){
+	console.log('- -');
+
+	var connection = request.accept(null, request.origin);
+
+	connection.on('message', function(message){
+		if (message.type === 'utf8'){
+			console.dir(message.utf8Data);
+			connection.send(message.utf8Data)
+		}else{
+			connection.sendBytes(message.binaryData);
+			console.log('get byte data.');
+		}
 	});
 
-	socket.on('client_message', function(data){
-		console.dir('@@@@@@@' + data + '@@@@@@@');
-		socket.emit('share_message', {text: 'from server ' + data + ' just now'})
+	connection.on('close', function(connection){
+		console.log('a account lost connect')
 	});
-
-	socket.emit('message', {text: 'you have connected!', number: client_counter})
-	socket.broadcast.emit('message', {text: 'a new user joined us!!, and we have ' + client_counter + ' users', number: client_counter})
-})
+});
