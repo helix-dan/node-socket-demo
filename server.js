@@ -74,3 +74,9 @@ wsServer.on('request', function(request){
 		// fight_array.pop(current_client);
 	});
 });
+
+
+function FightMod(clientA, clientB){
+	this.clientA = clientA;
+	this.clientB = clientB;
+}
