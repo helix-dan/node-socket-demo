@@ -8,7 +8,7 @@
 		<script>
 		    window.WebSocket = window.WebSocket || window.MozWebSocket;
 
-		    var connection = new WebSocket('ws://192.168.2.14:3000');
+		    var connection = new WebSocket('ws://192.168.2.167:3000', 'upup');
 
 		    connection.onopen = function () {
 		        alert('Your connection is open and ready to use!');
@@ -19,20 +19,73 @@
 		    };
 
 		    connection.onmessage = function (message) {
-		        $("#show").text(message.data);
+		    	var msg = JSON.parse(message.data)
+
+		    	if(msg.type === 'complete_realy'){
+		    		$("#fight_notice").text('ready, you are fight to ' + msg.data);
+		    		connection.send(JSON.stringify({type:'connect_success',data:msg.data}));
+		    	} else if (msg.type === 'fight_win'){
+		    		$("#fight_notice").text('Yeah you win!!');
+		    	}
+
+		        $("#show").text(msg.data);
 		    };
 
 		    $(document).ready(function(){
+		    	$("#btn_connect").click(function(){
+		    		$("#test_connect").show();
+		    		$("#test_fight").hide();
+		    	})
+
+		    	$("#btn_fight").click(function(){
+		    		connection.send('fight_ready');
+		    		$("#test_fight").show();
+		    		$("#test_connect").hide();
+		    		$("#btn_fight").attr('disabled', true)
+		    	})
+
 		    	$("#btn").click(function(){
 		    		var str = $("#input").val();
 		    		connection.send(str);
 		    	})
+
+		    	$("#leave_home_btn").click(function(){
+		    		connection.send('leave_fight');
+		    	})
+
+
 		    })
 		</script>
 		<center>
-			<input id="input" type="text" name="send_message"> Please input message</input><br /><br />
-			<button id="btn">send message</button><br /><br />
-			<div id="show"></div>
+			<div id='select_mode'>
+				<button id='btn_connect'>Connect Mode!</button>
+				<button id='btn_fight'>Fight Mode!</button>
+			</div>
+			<br />
+			<br />
+
+			<div id='test_connect' style='display:none'>
+				<p>Please input message</p>
+				<input id="input" type="text" name="send_message"></input><br /><br />
+				<button id="btn">send message</button><br /><br />
+				<div id="show"></div>
+			</div>
+			<br />
+			<br />
+
+			<div id='test_fight' style='display:none'>
+				<p id='fight_notice'>System searching man for you!</p>
+				<br />
+				<br />
+
+				<div id='fight_feature'>
+					<button id='leave_home_btn'>Leave Fight</button>
+				</div>
+			</div>
+			<br />
+			<br />
+
+
 		</center>
 	</body>
 </html>
