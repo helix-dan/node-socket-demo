@@ -1,52 +1,59 @@
 var WebSocketServer = require('websocket').server;
 var http            = require('http');
+var tools			= require('./lib/tools.js')
 
 var server = http.createServer(function(request, response){
-
+	//...
 });
 
 server.listen(3000, function(){
-	console.log('helix\'s server listen on port 3000')
+	console.log('socket server listen on port 3000')
 });
 
 var wsServer = new WebSocketServer({
 	httpServer: server
 });
 
-client_array = [];
-fight_array = [];
-
-var vistor_id = 0;
-
+var increase_id = 0;
+var ROOM_USER_LIMIT = 2;
 
 
 wsServer.on('request', function(request){
 	var connection = request.accept('upup', request.origin);
 
-	var current_client = {
-		id: ++vistor_id,
-		info: 'temp_info',
-		connection: connection,
-		fight_with: null
+	var user_info = {
+		name: increase_id,
+		fight_with: null,
+		sex: 'man',
+		connection: connection
 	}
 
+	var user_id = 'id' + (++increase_id).toString(),
 
-	client_array.push(current_client);
+	tools.new_user(user_id, user_info);
 
 	connection.on('message', function(message){
 		if (message.type === 'utf8'){
-			if (message.utf8Data === 'fight_ready'){
-				fight_array.push(current_client)
-				if (fight_array.length >= 2){
+
+			// some user into fight room
+			if (message.utf8Data === 'waiting_fight'){
+				// add this user to waiting_fight_room hash list
+				var fight_room_number = tools.new_fight_user(user_id, user_info);
+
+				// judge the waiting list length
+				// if people in here is enough
+				if (fight_room_number >= ROOM_USER_LIMIT){
+					console.log('ready info fight room');
+					tools.select_x_people_to_fight(ROOM_USER_LIMIT);
+
+
+
 					var clientA = fight_array.shift();
 					var clientB = fight_array.shift();
 					console.log('ready into fight!');
 
-					clientA.connection.send(JSON.stringify({type: 'complete_realy', data: clientB.id }));
-					clientB.connection.send(JSON.stringify({type: 'complete_realy', data: clientA.id }));
+					var simple_fight = FightMod.new(clientA, clientB);
 
-					clientA.fight_with = clientB;
-					clientB.fight_with = clientA;
 				}
 			} else if (message.utf8Data === 'leave_fight') {
 				current_client.fight_with.connection.send('another_leave');
@@ -69,9 +76,9 @@ wsServer.on('request', function(request){
 		console.log('a account lost connect');
 
 		// 从所有的链接数组中，删除当前链接
-		// client_array.pop(current_client);
+
 		// 从所有的对战数组中，删除当前链接
-		// fight_array.pop(current_client);
+
 	});
 });
 
@@ -79,4 +86,7 @@ wsServer.on('request', function(request){
 function FightMod(clientA, clientB){
 	this.clientA = clientA;
 	this.clientB = clientB;
+
+	clientA.connection.send(JSON.stringify({type: 'complete_realy', data: clientB.id }));
+	clientB.connection.send(JSON.stringify({type: 'complete_realy', data: clientA.id }));
 }

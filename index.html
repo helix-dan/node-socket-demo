@@ -38,7 +38,7 @@
 		    	})
 
 		    	$("#btn_fight").click(function(){
-		    		connection.send('fight_ready');
+		    		connection.send('waiting_fight');
 		    		$("#test_fight").show();
 		    		$("#test_connect").hide();
 		    		$("#btn_fight").attr('disabled', true)
