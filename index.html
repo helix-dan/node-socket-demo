@@ -37,6 +37,16 @@
 		    		$("#fight_notice").text(msg.data.text + '. and the user is:' + msg.data.name + '. and the room id is' + msg.data.room);
 		    		$("#leave_waiting_btn").hide();
 		    		$("#into_fight").show();
+
+		    	} else if (msg.type === 'force_leave'){
+		    		alert(msg.data);
+		    		$("#test_fight").hide();
+		    		$("#btn_fight").attr('disabled', false);
+
+		    	} else if (msg.type === 'another_leave'){
+		    		alert(msg.data);
+		    		$("#test_fight").hide();
+		    		$("#btn_fight").attr('disabled', false);
 		    	}
 
 		        $("#show").text(msg.data);
@@ -53,8 +63,11 @@
 		    		connection.send('leave_waiting');
 		    	})
 
-
+		    	$("#leave_fight_btn").click(function(){
+		    		connection.send('leave_fight');
+		    	})
 		    })
+
 		</script>
 		<center>
 			<div id='select_mode'>
@@ -64,13 +77,16 @@
 
 			<div id='test_fight' style='display:none'>
 				<p id='user_notice'></p>
-				<br />
 				<p id='fight_notice'>System searching man for you!</p>
 				<br />
 
 				<button id='leave_waiting_btn'>Leave Waiting</button>
 				<div id='into_fight' style='display:none'>
-					<button id='btn_a'>A</button><button id='btn_b'>B</button><button id='btn_c'>C</button>
+					<div id='battle_info'>
+						<button id='btn_a'>A</button>
+						<button id='btn_b'>B</button>
+						<button id='btn_c'>C</button>
+
 					<button id='leave_fight_btn'>Leave Fight</button>
 				<div>
 			</div>

@@ -25,6 +25,8 @@ wsServer.on('request', function(request){
 		name: increase_id,
 		sex: 'man',
 		fight_with: [],
+		room_id: null,
+		iq: ,
 		connection: connection
 	}
 
@@ -67,15 +69,16 @@ wsServer.on('request', function(request){
 								text: 'find people for you'
 							}
 						}
-						room.member[mem].connection.send(JSON.stringify(send_info))
+						room.member[mem].connection.send(JSON.stringify(send_info));
 					}
 				}
 
 			} else if (message.utf8Data === 'leave_waiting') {
 				tools.leave_waiting(user_id);
 
-			} else if (message.utf8Data == 'another_leave') {
-				
+			} else if (message.utf8Data == 'leave_fight') {
+				tools.leave_fight(user_id);
+
 			} else {
 				
 			}
