@@ -26,7 +26,7 @@ wsServer.on('request', function(request){
 		sex: 'man',
 		fight_with: [],
 		room_id: null,
-		iq: ,
+		iq: 0,
 		connection: connection
 	}
 
