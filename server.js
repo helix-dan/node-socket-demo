@@ -15,7 +15,7 @@ var wsServer = new WebSocketServer({
 });
 
 var increase_id = 0;
-var ROOM_USER_LIMIT = 2;
+var ROOM_USER_LIMIT = 3;
 
 
 wsServer.on('request', function(request){
@@ -23,46 +23,61 @@ wsServer.on('request', function(request){
 
 	var user_info = {
 		name: increase_id,
-		fight_with: null,
 		sex: 'man',
+		fight_with: [],
 		connection: connection
 	}
 
-	var user_id = 'id' + (++increase_id).toString(),
-
-	tools.new_user(user_id, user_info);
+	var user_id = 'uid' + (++increase_id).toString();
 
 	connection.on('message', function(message){
 		if (message.type === 'utf8'){
 
 			// some user into fight room
 			if (message.utf8Data === 'waiting_fight'){
+				var current_info = {
+					type: 'current_info',
+					data: {
+						id: user_id
+					}
+				}
+				connection.send(JSON.stringify(current_info));
 				// add this user to waiting_fight_room hash list
-				var fight_room_number = tools.new_fight_user(user_id, user_info);
+				var user_waiting_number = tools.new_waiting_user(user_id, user_info);
 
 				// judge the waiting list length
-				// if people in here is enough
-				if (fight_room_number >= ROOM_USER_LIMIT){
+				// if people is enough to build fight room
+				if (user_waiting_number >= ROOM_USER_LIMIT){
 					console.log('ready info fight room');
-					tools.select_x_people_to_fight(ROOM_USER_LIMIT);
+					// get room obj
+					var room = tools.select_x_people_to_fight(ROOM_USER_LIMIT);
 
+					// send message to room member
+					for (var mem in room.member){
+						var their_name = '';
+						for(var i=0; i<room.member[mem].fight_with.length; ++i){
+							their_name += room.member[mem].fight_with[i] + ' ';
+						}
 
-
-					var clientA = fight_array.shift();
-					var clientB = fight_array.shift();
-					console.log('ready into fight!');
-
-					var simple_fight = FightMod.new(clientA, clientB);
-
+						var send_info = {
+							type: 'find_user',
+							data: {
+								room: room.id,
+								name: their_name,
+								text: 'find people for you'
+							}
+						}
+						room.member[mem].connection.send(JSON.stringify(send_info))
+					}
 				}
-			} else if (message.utf8Data === 'leave_fight') {
-				current_client.fight_with.connection.send('another_leave');
-				current_client.fight_with = null;
+
+			} else if (message.utf8Data === 'leave_waiting') {
+				tools.leave_waiting(user_id);
 
 			} else if (message.utf8Data == 'another_leave') {
-				connection.send(JSON.stringify({type: 'fight_win', data: 'you get 5 points!' }))
+				
 			} else {
-				connection.send(message.utf8Data);
+				
 			}
 			
 		}else{
@@ -75,18 +90,7 @@ wsServer.on('request', function(request){
 	connection.on('close', function(connection){
 		console.log('a account lost connect');
 
-		// 从所有的链接数组中，删除当前链接
-
 		// 从所有的对战数组中，删除当前链接
-
+		tools.leave_waiting(user_id);
 	});
 });
-
-
-function FightMod(clientA, clientB){
-	this.clientA = clientA;
-	this.clientB = clientB;
-
-	clientA.connection.send(JSON.stringify({type: 'complete_realy', data: clientB.id }));
-	clientB.connection.send(JSON.stringify({type: 'complete_realy', data: clientA.id }));
-}
