@@ -89,11 +89,10 @@ wsServer.on('request', function(request){
 		}
 	});
 
-	// 当设备断开链接
 	connection.on('close', function(connection){
 		console.log('a account lost connect');
 
-		// 从所有的对战数组中，删除当前链接
 		tools.leave_waiting(user_id);
+		tools.leave_fight(user_id);
 	});
 });
