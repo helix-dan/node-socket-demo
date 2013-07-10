@@ -54,23 +54,7 @@ wsServer.on('request', function(request){
 					// get room obj
 					var room = tools.select_x_people_to_fight(ROOM_USER_LIMIT);
 
-					// send message to room member
-					for (var mem in room.member){
-						var their_name = '';
-						for(var i=0; i<room.member[mem].fight_with.length; ++i){
-							their_name += room.member[mem].fight_with[i] + ' ';
-						}
-
-						var send_info = {
-							type: 'find_user',
-							data: {
-								room: room.id,
-								name: their_name,
-								text: 'find people for you'
-							}
-						}
-						room.member[mem].connection.send(JSON.stringify(send_info));
-					}
+					tools.init_room(room);
 				}
 
 			} else if (message.utf8Data === 'leave_waiting') {
