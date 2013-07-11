@@ -83,7 +83,7 @@ wsServer.on('request', function(request){
 					tools.go_on_battle(user_id);
 				} else {
 					// end the battle
-
+					tools.end_fight(user_id);
 				}
 			}
 			

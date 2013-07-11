@@ -81,6 +81,17 @@
 		    	
 		    	} else if (msg.type === 'answer_status'){
 		    		alert('the people select: ' + msg.data);
+
+		    	} else if (msg.type === 'end_fight'){
+		    		alert('ddddddddddddddddd')
+		    		alert(msg.data['text']);
+
+		    		// change jquery status
+		    		$("#wait_fight").hide();
+		    		$("#btn_fight").attr('disabled', false);
+		    		$("#fight_notice").text('');
+		    		$("#oppo_info").hide();
+		    		$("#battle_info").hide();
 		    	}
 
 		        $("#show").text(msg.data);
