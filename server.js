@@ -67,14 +67,24 @@ wsServer.on('request', function(request){
 				}
 
 			} else if (msg['type'] === 'leave_waiting') {
-				console.log('kk')
 				tools.leave_waiting(user_id);
 
-			} else if (msg['type'] == 'leave_fight') {
+			} else if (msg['type'] === 'leave_fight') {
 				tools.leave_fight(user_id);
 
-			} else {
-				
+			} else if (msg['type'] === 'send_answer'){
+				// send answer status to another user
+				tools.send_status_to_another(user_id, msg.data['answer'])
+
+				// answer a question and check right answer
+				var go_on = tools.compute_point(user_id, msg.data['answer']);
+				if(go_on){
+					// go on battle
+					tools.go_on_battle(user_id);
+				} else {
+					// end the battle
+
+				}
 			}
 			
 		}else{

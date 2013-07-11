@@ -78,6 +78,9 @@
 						$("#btn_answer_c").text(msg.data.h[2]).prop('disabled', true);
 						$("#btn_answer_d").text(msg.data.h[3]).prop('disabled', true);
 		    		}
+		    	
+		    	} else if (msg.type === 'answer_status'){
+		    		alert('the people select: ' + msg.data);
 		    	}
 
 		        $("#show").text(msg.data);
