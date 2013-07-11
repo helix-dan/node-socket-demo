@@ -8,7 +8,7 @@
 		<script>
 		    window.WebSocket = window.WebSocket || window.MozWebSocket;
 
-		    var connection = new WebSocket('ws://192.168.2.167:3000', 'upup');
+		    var connection = new WebSocket('ws://192.168.2.167:3000');
 		    current_id = '';
 
 		    connection.onopen = function () {
@@ -16,7 +16,7 @@
 		    };
 
 		    connection.onerror = function (error) {
-		        alser('You meet some error!')
+		        alert('You meet some error!')
 		    };
 
 		    connection.onmessage = function (message) {
@@ -83,7 +83,6 @@
 		    		alert('the people select: ' + msg.data);
 
 		    	} else if (msg.type === 'end_fight'){
-		    		alert('ddddddddddddddddd')
 		    		alert(msg.data['text']);
 
 		    		// change jquery status

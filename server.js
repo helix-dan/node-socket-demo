@@ -19,7 +19,7 @@ var ROOM_USER_LIMIT = 2;
 
 
 wsServer.on('request', function(request){
-	var connection = request.accept('upup', request.origin);
+	var connection = request.accept(null, request.origin);
 
 	// get it for redis or client
 	// ....
