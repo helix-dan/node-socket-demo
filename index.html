@@ -35,35 +35,48 @@
 		    		$("#btn_fight").attr('disabled', false);
 
 		    	} else if (msg.type === 'find_user'){
+		    		$("#oppo_info").show();
 		    		$("#fight_notice").text(msg.data.text + '. and the user is:' + msg.data.oppo_data.name + '. and the room id is' + msg.data.room);
 		    		$("#oppo_user_sex").text('his sex is:' + msg.data.oppo_data.sex);
 		    		$("#oppo_user_iq").text('his iq is:' + msg.data.oppo_data.iq);
-		    		$("#leave_waiting_btn").hide();
-		    		$("#into_fight").show();
+		    		$("#wait_fight").hide();
+		    		
 
 		    	} else if (msg.type === 'force_leave'){
 		    		alert(msg.data);
 		    		$("#wait_fight").hide();
 		    		$("#btn_fight").attr('disabled', false);
 		    		$("#fight_notice").text('');
-		    		$("#into_fight").hide();
+		    		$("#oppo_info").hide();
+		    		$("#battle_info").hide();
 
 		    	} else if (msg.type === 'another_leave'){
 		    		alert(msg.data);
 		    		$("#wait_fight").hide();
 		    		$("#btn_fight").attr('disabled', false);
 		    		$("#fight_notice").text('');
-		    		$("#into_fight").hide();
+		    		$("#oppo_info").hide();
+		    		$("#battle_info").hide();
 
 		    	} else if (msg.type === 'question'){
 		    		if(msg.data.ans === current_id){
 		    			// you can use the button
-
-		    			alert('you answer!')
-
+						// alert('you answer!')
+						$("#battle_info").show();
+						$("#question").text(msg.data.q);
+						$("#btn_answer_a").text(msg.data.h[0]).prop('disabled', false);
+						$("#btn_answer_b").text(msg.data.h[1]).prop('disabled', false);
+						$("#btn_answer_c").text(msg.data.h[2]).prop('disabled', false);
+						$("#btn_answer_d").text(msg.data.h[3]).prop('disabled', false);
 		    		}else{
 		    			// you can only see!
-		    			alert('you wait!')
+		    			// alert('you wait!')
+		    			$("#battle_info").show();
+						$("#question").text(msg.data.q);
+						$("#btn_answer_a").text(msg.data.h[0]).prop('disabled', true);
+						$("#btn_answer_b").text(msg.data.h[1]).prop('disabled', true);
+						$("#btn_answer_c").text(msg.data.h[2]).prop('disabled', true);
+						$("#btn_answer_d").text(msg.data.h[3]).prop('disabled', true);
 		    		}
 		    	}
 
@@ -72,17 +85,40 @@
 
 		    $(document).ready(function(){
 		    	$("#btn_fight").click(function(){
-		    		connection.send('waiting_fight');
+		    		var send_info = {
+		    			'type': 'waiting_fight',
+		    			'data': ''
+		    		}
+		    		connection.send(JSON.stringify(send_info));
 		    		$("#wait_fight").show();
-		    		$("#btn_fight").attr('disabled', true)
+		    		$("#btn_fight").attr('disabled', true);
 		    	})
 
 		    	$("#leave_waiting_btn").click(function(){
-		    		connection.send('leave_waiting');
+		    		var send_info = {
+		    			type: 'leave_waiting',
+		    			data: ''
+		    		}
+		    		connection.send(JSON.stringify(send_info));
 		    	})
 
 		    	$("#leave_fight_btn").click(function(){
-		    		connection.send('leave_fight');
+		    		var send_info = {
+		    			type: 'leave_fight',
+		    			data: ''
+		    		}
+		    		connection.send(JSON.stringify(send_info));
+		    	})
+
+		    	$(".answer").click(function(){
+		    		var ans = $(this).text();
+		    		var send_info = {
+		    			type: 'send_answer',
+		    			data: {
+		    				answer: ans
+		    			}
+		    		}
+		    		connection.send(JSON.stringify(send_info));
 		    	})
 		    })
 
@@ -101,22 +137,26 @@
 				<button id='leave_waiting_btn'>Leave Waiting</button>
 			</div>
 			<br />
+			============================================
 
-			<div id='into_fight' style='display:none'>
-				<div id='oppo_info'>
-					<p id='oppo_user_sex'></p>
-					<p id='oppo_user_iq'></p>
-				</div>
+			
+			<div id='oppo_info' style='display:none'>
+				<p id='oppo_user_sex'></p>
+				<p id='oppo_user_iq'></p>
 				<p id='fight_notice'></p>
-				<div id='battle_info'>
-					<p id='question'></p><br />
-					<button id='btn_a'>A</button><br />
-					<button id='btn_b'>B</button><br />
-					<button id='btn_c'>C</button><br />
-					<button id='btn_d'>D</button><br /><br />
-
 				<button id='leave_fight_btn'>Leave Fight</button>
-			<div>
+			</div>
+			<br />
+
+			===========================================
+			<div id='battle_info' style='display:none'>
+				<p id='question'></p><br />
+				<button id='btn_answer_a' class="answer"></button><br />
+				<button id='btn_answer_b' class="answer"></button><br />
+				<button id='btn_answer_c' class="answer"></button><br />
+				<button id='btn_answer_d' class="answer"></button><br />
+			</div>
+
 		</center>
 	</body>
 </html>

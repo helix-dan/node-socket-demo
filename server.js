@@ -39,10 +39,13 @@ wsServer.on('request', function(request){
 	var user_id = 'uid' + (++increase_id).toString();
 
 	connection.on('message', function(message){
+
 		if (message.type === 'utf8'){
 
+		var msg = JSON.parse(message.utf8Data)
+
 			// some user into fight room
-			if (message.utf8Data === 'waiting_fight'){
+			if (msg['type'] === 'waiting_fight'){
 				var current_info = {
 					type: 'current_info',
 					data: {
@@ -63,10 +66,11 @@ wsServer.on('request', function(request){
 					tools.init_room_two(room);
 				}
 
-			} else if (message.utf8Data === 'leave_waiting') {
+			} else if (msg['type'] === 'leave_waiting') {
+				console.log('kk')
 				tools.leave_waiting(user_id);
 
-			} else if (message.utf8Data == 'leave_fight') {
+			} else if (msg['type'] == 'leave_fight') {
 				tools.leave_fight(user_id);
 
 			} else {
@@ -82,8 +86,14 @@ wsServer.on('request', function(request){
 	// user's network disconnect
 	connection.on('close', function(connection){
 		console.log('a account lost connect');
-
-		tools.leave_waiting(user_id);
-		tools.leave_fight(user_id);
+		if(typeof waiting_users[user_id] === "undefined"){
+			if(typeof fight_users[user_id] === "undefined"){
+				// nothing to do
+			} else {
+				tools.leave_fight(user_id);
+			}
+		} else {
+			tools.leave_waiting(user_id);
+		}
 	});
 });
