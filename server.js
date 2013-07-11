@@ -42,7 +42,7 @@ wsServer.on('request', function(request){
 
 		if (message.type === 'utf8'){
 
-		var msg = JSON.parse(message.utf8Data)
+			var msg = JSON.parse(message.utf8Data)
 
 			// some user into fight room
 			if (msg['type'] === 'waiting_fight'){
