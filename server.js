@@ -15,21 +15,27 @@ var wsServer = new WebSocketServer({
 });
 
 var increase_id = 0;
-var ROOM_USER_LIMIT = 3;
+var ROOM_USER_LIMIT = 2;
 
 
 wsServer.on('request', function(request){
 	var connection = request.accept('upup', request.origin);
 
+	// get it for redis or client
+	// ....
 	var user_info = {
 		name: increase_id,
 		sex: 'man',
 		fight_with: [],
 		room_id: null,
-		iq: 0,
+		iq: Math.floor(Math.random()*100),
+		right_num: 0,
+		wrong_num: 0,
+		answer: false,
 		connection: connection
 	}
 
+	// temp user id
 	var user_id = 'uid' + (++increase_id).toString();
 
 	connection.on('message', function(message){
@@ -54,7 +60,7 @@ wsServer.on('request', function(request){
 					// get room obj
 					var room = tools.select_x_people_to_fight(ROOM_USER_LIMIT);
 
-					tools.init_room(room);
+					tools.init_room_two(room);
 				}
 
 			} else if (message.utf8Data === 'leave_waiting') {
@@ -73,6 +79,7 @@ wsServer.on('request', function(request){
 		}
 	});
 
+	// user's network disconnect
 	connection.on('close', function(connection){
 		console.log('a account lost connect');
 

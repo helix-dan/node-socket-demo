@@ -9,6 +9,7 @@
 		    window.WebSocket = window.WebSocket || window.MozWebSocket;
 
 		    var connection = new WebSocket('ws://192.168.2.167:3000', 'upup');
+		    current_id = '';
 
 		    connection.onopen = function () {
 		        alert('Your connection is open and ready to use!');
@@ -26,7 +27,7 @@
 
 		    	} else if (msg.type === 'current_info'){
 		    		$('#user_notice').text('your id is:' + msg.data.id);
-
+		    		current_id = msg.data.id;
 
 		    	} else if (msg.type === 'leave_success'){
 		    		alert(msg.data);
@@ -34,7 +35,9 @@
 		    		$("#btn_fight").attr('disabled', false);
 
 		    	} else if (msg.type === 'find_user'){
-		    		$("#fight_notice").text(msg.data.text + '. and the user is:' + msg.data.name + '. and the room id is' + msg.data.room);
+		    		$("#fight_notice").text(msg.data.text + '. and the user is:' + msg.data.oppo_data.name + '. and the room id is' + msg.data.room);
+		    		$("#oppo_user_sex").text('his sex is:' + msg.data.oppo_data.sex);
+		    		$("#oppo_user_iq").text('his iq is:' + msg.data.oppo_data.iq);
 		    		$("#leave_waiting_btn").hide();
 		    		$("#into_fight").show();
 
@@ -51,6 +54,17 @@
 		    		$("#btn_fight").attr('disabled', false);
 		    		$("#fight_notice").text('');
 		    		$("#into_fight").hide();
+
+		    	} else if (msg.type === 'question'){
+		    		if(msg.data.ans === current_id){
+		    			// you can use the button
+
+		    			alert('you answer!')
+
+		    		}else{
+		    			// you can only see!
+		    			alert('you wait!')
+		    		}
 		    	}
 
 		        $("#show").text(msg.data);
@@ -89,12 +103,17 @@
 			<br />
 
 			<div id='into_fight' style='display:none'>
+				<div id='oppo_info'>
+					<p id='oppo_user_sex'></p>
+					<p id='oppo_user_iq'></p>
+				</div>
 				<p id='fight_notice'></p>
 				<div id='battle_info'>
 					<p id='question'></p><br />
 					<button id='btn_a'>A</button><br />
 					<button id='btn_b'>B</button><br />
-					<button id='btn_c'>C</button><br /><br />
+					<button id='btn_c'>C</button><br />
+					<button id='btn_d'>D</button><br /><br />
 
 				<button id='leave_fight_btn'>Leave Fight</button>
 			<div>
