@@ -25,7 +25,6 @@ wsServer.on('request', function(request){
 	// get it for redis or client
 	// ....
 	var user_info = {
-		name: increase_id,
 		sex: 'man',
 		room_id: null,
 		iq: Math.floor(Math.random()*100),
@@ -43,20 +42,14 @@ wsServer.on('request', function(request){
 
 			// some user into fight room
 			if (msg['type'] === 'waiting_fight'){
-				var current_info = {
-					type: 'current_info',
-					data: {
-						id: user_id
-					}
-				}
-				connection.send(JSON.stringify(current_info));
-// console.log("iiiinnnnffffooooo")
 
+				user_info['name'] = msg.data;
 				user_info['fight_with'] = [];
 				user_info['right_num'] = 0;
 				user_info['wrong_num'] = 0;
-				user_info['answer'] = false;
-// console.dir(user_info);
+// 				user_info['answer'] = false;
+// console.log('lllllllllllll')
+// console.dir(user_info.name);
 				// add this user to waiting_fight_room hash list
 				var user_waiting_number = tools.new_waiting_user(user_id, user_info);
 

@@ -8,8 +8,7 @@
 		<script>
 		    window.WebSocket = window.WebSocket || window.MozWebSocket;
 
-		    var connection = new WebSocket('ws://192.168.2.14:3000');
-		    current_id = '';
+		    var connection = new WebSocket('ws://192.168.2.167:3000');
 
 		    connection.onopen = function () {
 		        alert('Your connection is open and ready to use!');
@@ -24,10 +23,6 @@
 
 		    	if(msg.type === 'fight_win'){
 		    		$("#fight_notice").text('Yeah you win!!');
-
-		    	} else if (msg.type === 'current_info'){
-		    		$('#user_notice').text('your id is:' + msg.data.id);
-		    		current_id = msg.data.id;
 
 		    	} else if (msg.type === 'leave_success'){
 		    		alert(msg.data);
@@ -59,7 +54,7 @@
 		    		$("#battle_info").hide();
 
 		    	} else if (msg.type === 'question'){
-		    		if(msg.data.ans === current_id){
+		    		if(msg.data.ans === 'yes'){
 		    			// you can use the button
 						// alert('you answer!')
 						$("#battle_info").show();
@@ -107,7 +102,7 @@
 		    	$("#btn_fight").click(function(){
 		    		var send_info = {
 		    			'type': 'waiting_fight',
-		    			'data': ''
+		    			'data': $("#user_name").val()
 		    		}
 		    		connection.send(JSON.stringify(send_info));
 		    		$("#wait_fight").show();
@@ -145,6 +140,7 @@
 		</script>
 		<center>
 			<div id='select_mode'>
+				<input id='user_name'></input>
 				<button id='btn_fight'>Fight Mode!</button>
 			</div>
 			<br />
