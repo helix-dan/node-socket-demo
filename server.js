@@ -26,12 +26,8 @@ wsServer.on('request', function(request){
 	var user_info = {
 		name: increase_id,
 		sex: 'man',
-		fight_with: [],
 		room_id: null,
 		iq: Math.floor(Math.random()*100),
-		right_num: 0,
-		wrong_num: 0,
-		answer: false,
 		connection: connection
 	}
 
@@ -53,6 +49,13 @@ wsServer.on('request', function(request){
 					}
 				}
 				connection.send(JSON.stringify(current_info));
+// console.log("iiiinnnnffffooooo")
+
+				user_info['fight_with'] = [];
+				user_info['right_num'] = 0;
+				user_info['wrong_num'] = 0;
+				user_info['answer'] = false;
+// console.dir(user_info);
 				// add this user to waiting_fight_room hash list
 				var user_waiting_number = tools.new_waiting_user(user_id, user_info);
 
