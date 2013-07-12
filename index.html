@@ -91,6 +91,13 @@
 		    		$("#fight_notice").text('');
 		    		$("#oppo_info").hide();
 		    		$("#battle_info").hide();
+
+		    	} else if (msg.type === 'timeout'){
+		    		alert(msg.data);
+		    		$("#btn_answer_a").prop('disabled', true);
+					$("#btn_answer_b").prop('disabled', true);
+					$("#btn_answer_c").prop('disabled', true);
+					$("#btn_answer_d").prop('disabled', true);
 		    	}
 
 		        $("#show").text(msg.data);
