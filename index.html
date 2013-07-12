@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
 	<head>
-	    <title>Socket.io Expo</title>
+	    <title>Node.js WebSocket Expo</title>
 	    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 	</head>
 	<body>
 		<script>
 		    window.WebSocket = window.WebSocket || window.MozWebSocket;
 
-		    var connection = new WebSocket('ws://192.168.2.167:3000');
+		    var connection = new WebSocket('ws://192.168.2.14:3000');
 		    current_id = '';
 
 		    connection.onopen = function () {

@@ -7,7 +7,8 @@
     "url": "git://github.com/helix-dan/node-socket-demo.git"
   },
   "dependencies": {
-    "socket.io": "~0.9.16"
+    "redis":"~0.8.4",
+    "websocket":"~1.0.8"
   },
   "author": "helix-dan",
   "license": "BSD",
