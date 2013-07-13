@@ -23,7 +23,7 @@ wsServer.on('request', function(request){
 	var connection = request.accept(null, request.origin);
 
 	// get it for redis or client
-	// ....
+	// .... temp
 	var user_info = {
 		sex: 'man',
 		room_id: null,
@@ -32,6 +32,7 @@ wsServer.on('request', function(request){
 	}
 
 	// temp user id
+	// redis replace it
 	var user_id = 'uid' + (++increase_id).toString();
 
 	connection.on('message', function(message){
@@ -44,12 +45,10 @@ wsServer.on('request', function(request){
 			if (msg['type'] === 'join'){
 
 				user_info['name'] = msg.data;
+				// use array! for the future 3, 4, 5 or more people!
 				user_info['fight_with'] = [];
 				user_info['right_num'] = 0;
 				user_info['wrong_num'] = 0;
-// 				user_info['answer'] = false;
-// console.log('lllllllllllll')
-// console.dir(user_info.name);
 				// add this user to waiting_fight_room hash list
 				var user_waiting_number = tools.new_waiting_user(user_id, user_info);
 
@@ -63,10 +62,9 @@ wsServer.on('request', function(request){
 					tools.init_room_two(room);
 				}
 
-			} else if (msg['type'] === 'leave_waiting') {
+			} else if (msg['type'] === 'quit') {
+				console.log('quit the room')
 				tools.leave_waiting(user_id);
-
-			} else if (msg['type'] === 'leave_fight') {
 				tools.leave_fight(user_id);
 
 			} else if (msg['type'] === 'answer'){
@@ -92,15 +90,16 @@ wsServer.on('request', function(request){
 
 	// user's network disconnect
 	connection.on('close', function(connection){
-		console.log('a account lost connect');
 		if(typeof waiting_users[user_id] === "undefined"){
 			if(typeof fight_users[user_id] === "undefined"){
 				// nothing to do
 			} else {
 				tools.leave_fight(user_id);
+				tools.end_fight(user_id);
 			}
 		} else {
 			tools.leave_waiting(user_id);
+			tools.end_fight(user_id);
 		}
 	});
 });

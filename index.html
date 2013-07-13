@@ -24,37 +24,12 @@
 		    connection.onmessage = function (message) {
 		    	var msg = JSON.parse(message.data)
 
-		    	if(msg.type === 'fight_win'){
-		    		$("#fight_notice").text('你赢了');
-
-		    	} else if (msg.type === 'leave_success'){
-		    		alert(msg.data);
-		    		$("#wait_fight").hide();
-		    		$("#btn_fight").attr('disabled', false);
-
-		    	} else if (msg.type === 'competitor'){
+		    	if(msg.type === 'competitor'){
 		    		$("#oppo_info").show();
 		    		$("#fight_notice").text(msg.data.text + '. 你的对手是:' + msg.data.oppo_data.name + '. 房间号:' + msg.data.room);
 		    		$("#oppo_user_sex").text('他的性别:' + msg.data.oppo_data.sex);
 		    		$("#oppo_user_iq").text('他的渊博值:' + msg.data.oppo_data.iq);
 		    		$("#wait_fight").hide();
-		    		
-
-		    	} else if (msg.type === 'force_leave'){
-		    		alert(msg.data);
-		    		$("#wait_fight").hide();
-		    		$("#btn_fight").attr('disabled', false);
-		    		$("#fight_notice").text('');
-		    		$("#oppo_info").hide();
-		    		$("#battle_info").hide();
-
-		    	} else if (msg.type === 'another_leave'){
-		    		alert(msg.data);
-		    		$("#wait_fight").hide();
-		    		$("#btn_fight").attr('disabled', false);
-		    		$("#fight_notice").text('');
-		    		$("#oppo_info").hide();
-		    		$("#battle_info").hide();
 
 		    	} else if (msg.type === 'question'){
 		    		$("#one").text(msg.data['info'][0]['uid'])
@@ -89,8 +64,8 @@
 		    	} else if (msg.type === 'answer'){
 		    		alert('the people select: ' + msg.data['ans']);
 
-		    	} else if (msg.type === 'end_fight'){
-		    		alert(msg.data['text']);
+		    	} else if (msg.type === 'result'){
+		    		alert('胜利者是:'+msg.data['winner']+' 失败者是:'+msg.data['loser']);
 
 		    		// change jquery status
 		    		$("#wait_fight").hide();
@@ -98,13 +73,6 @@
 		    		$("#fight_notice").text('');
 		    		$("#oppo_info").hide();
 		    		$("#battle_info").hide();
-
-		    	} else if (msg.type === 'timeout'){
-		    		alert(msg.data);
-		    		$("#btn_answer_a").prop('disabled', true);
-					$("#btn_answer_b").prop('disabled', true);
-					$("#btn_answer_c").prop('disabled', true);
-					$("#btn_answer_d").prop('disabled', true);
 		    	}
 
 		        $("#show").text(msg.data);
@@ -123,7 +91,7 @@
 
 		    	$("#leave_waiting_btn").click(function(){
 		    		var send_info = {
-		    			type: 'leave_waiting',
+		    			type: 'quit',
 		    			data: ''
 		    		}
 		    		connection.send(JSON.stringify(send_info));
@@ -131,7 +99,7 @@
 
 		    	$("#leave_fight_btn").click(function(){
 		    		var send_info = {
-		    			type: 'leave_fight',
+		    			type: 'quit',
 		    			data: ''
 		    		}
 		    		connection.send(JSON.stringify(send_info));
