@@ -41,7 +41,7 @@ wsServer.on('request', function(request){
 			var msg = JSON.parse(message.utf8Data)
 
 			// some user into fight room
-			if (msg['type'] === 'waiting_fight'){
+			if (msg['type'] === 'join'){
 
 				user_info['name'] = msg.data;
 				user_info['fight_with'] = [];
@@ -69,12 +69,12 @@ wsServer.on('request', function(request){
 			} else if (msg['type'] === 'leave_fight') {
 				tools.leave_fight(user_id);
 
-			} else if (msg['type'] === 'send_answer'){
+			} else if (msg['type'] === 'answer'){
 				// send answer status to another user
-				tools.send_status_to_another(user_id, msg.data['answer'])
+				tools.send_status_to_another(user_id, msg.data['ans'])
 
 				// answer a question and check right answer
-				var go_on = tools.compute_point(user_id, msg.data['answer']);
+				var go_on = tools.compute_point(user_id, msg.data['ans']);
 				if(go_on){
 					// go on battle
 					tools.go_on_battle(user_id);
