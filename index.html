@@ -27,8 +27,7 @@
 		    	if(msg.type === 'competitor'){
 		    		$("#oppo_info").show();
 		    		$("#fight_notice").text(msg.data.text + '. 你的对手是:' + msg.data.oppo_data.name + '. 房间号:' + msg.data.room);
-		    		$("#oppo_user_sex").text('他的性别:' + msg.data.oppo_data.sex);
-		    		$("#oppo_user_iq").text('他的渊博值:' + msg.data.oppo_data.iq);
+		    		$("#oppo_user_exp").text('他的渊博值:' + msg.data.oppo_data.exp);
 		    		$("#wait_fight").hide();
 
 		    	} else if (msg.type === 'question'){
@@ -95,6 +94,8 @@
 		    			data: ''
 		    		}
 		    		connection.send(JSON.stringify(send_info));
+		    		$("#btn_fight").attr('disabled', false);
+		    		$("#wait_fight").hide();
 		    	})
 
 		    	$("#leave_fight_btn").click(function(){
@@ -138,8 +139,7 @@
 
 			
 			<div id='oppo_info' style='display:none'>
-				<p id='oppo_user_sex'></p>
-				<p id='oppo_user_iq'></p>
+				<p id='oppo_user_exp'></p>
 				<p id='fight_notice'></p>
 				<button id='leave_fight_btn'>离开战斗</button>
 			</div>
