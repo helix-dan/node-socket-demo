@@ -70,9 +70,9 @@ wsServer.on('request', function(request){
 							if (userWaitingNumber >= ROOM_USER_LIMIT){
 								console.log('ready info fight room');
 								// get room obj
-								var room = tools.select_x_people_to_fight(ROOM_USER_LIMIT);
+								var room = tools.selectXPeopleToFight(ROOM_USER_LIMIT);
 
-								tools.init_room_two(room, client);
+								tools.initRoomTwo(room, client);
 							}
 						}
 					});
@@ -84,20 +84,20 @@ wsServer.on('request', function(request){
 				
 			} else if (msg['type'] === 'quit') {
 				tools.leaveWaiting(userId);
-				tools.end_fight(userId);
+				tools.endFight(userId);
 
 			} else if (msg['type'] === 'answer'){
 				// send answer status to another user
-				tools.send_status_to_another(userId, msg.data['ans'])
+				tools.sendStatusToAnother(userId, msg.data['ans'])
 
 				// answer a question and check right answer
-				var go_on = tools.compute_point(userId, msg.data['ans']);
+				var go_on = tools.computePoint(userId, msg.data['ans']);
 				if(go_on){
 					// go on battle
-					tools.go_on_battle(userId, client);
+					tools.goOnBattle(userId, client);
 				} else {
 					// end the battle
-					tools.end_fight(userId);
+					tools.endFight(userId);
 				}
 			}
 			
@@ -115,11 +115,11 @@ wsServer.on('request', function(request){
 			// if(typeof fightUsers[userId] === "undefined"){
 			// 	// nothing to do
 			// } else {
-			// 	// tools.end_fight(userId);
+			// 	// tools.endFight(userId);
 			// }
 		} else {
 			tools.leaveWaiting(userId);
-			// tools.end_fight(userId);
+			// tools.endFight(userId);
 		}
 	});
 });
