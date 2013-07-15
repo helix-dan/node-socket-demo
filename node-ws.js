@@ -7,11 +7,11 @@ var server = http.createServer(function(request, response){
 	//...
 });
 
-var redis_conf = {
+var redisConf = {
 	host: '192.168.2.18',
 	port: 6379
 }
-var client = redis.createClient(redis_conf.port, redis_conf.host);
+var client = redis.createClient(redisConf.port, redisConf.host);
 
 server.listen(3000, function(){
 	console.log('socket server listen on port 3000')
@@ -56,7 +56,7 @@ wsServer.on('request', function(request){
 				user_info['right_num'] = 0;
 				user_info['wrong_num'] = 0;
 				// add this user to waiting_fight_room hash list
-				var user_waiting_number = tools.new_waiting_user(user_id, user_info);
+				var user_waiting_number = tools.newWaitingUser(user_id, user_info);
 
 				// judge the waiting list length
 				// if people is enough to build fight room
@@ -70,8 +70,8 @@ wsServer.on('request', function(request){
 
 			} else if (msg['type'] === 'quit') {
 				console.log('quit the room')
-				tools.leave_waiting(user_id);
-				tools.leave_fight(user_id);
+				tools.leaveWaiting(user_id);
+				tools.end_fight(user_id);
 
 			} else if (msg['type'] === 'answer'){
 				// send answer status to another user
@@ -100,11 +100,10 @@ wsServer.on('request', function(request){
 			if(typeof fight_users[user_id] === "undefined"){
 				// nothing to do
 			} else {
-				tools.leave_fight(user_id);
 				tools.end_fight(user_id);
 			}
 		} else {
-			tools.leave_waiting(user_id);
+			tools.leaveWaiting(user_id);
 			tools.end_fight(user_id);
 		}
 	});
