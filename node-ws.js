@@ -7,6 +7,12 @@ var server = http.createServer(function(request, response){
 	//...
 });
 
+var redis_conf = {
+	host: '192.168.2.18',
+	port: 6379
+}
+var client = redis.createClient(redis_conf.port, redis_conf.host);
+
 server.listen(3000, function(){
 	console.log('socket server listen on port 3000')
 });
@@ -59,7 +65,7 @@ wsServer.on('request', function(request){
 					// get room obj
 					var room = tools.select_x_people_to_fight(ROOM_USER_LIMIT);
 
-					tools.init_room_two(room);
+					tools.init_room_two(room, client);
 				}
 
 			} else if (msg['type'] === 'quit') {
@@ -75,7 +81,7 @@ wsServer.on('request', function(request){
 				var go_on = tools.compute_point(user_id, msg.data['ans']);
 				if(go_on){
 					// go on battle
-					tools.go_on_battle(user_id);
+					tools.go_on_battle(user_id, client);
 				} else {
 					// end the battle
 					tools.end_fight(user_id);
