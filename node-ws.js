@@ -46,33 +46,42 @@ wsServer.on('request', function(request){
 			// some user into fight room
 			if (msg['type'] === 'join'){
 				userId = msg.data;
-				client.hgetall('uid:' + msg.data, function(err, data){
-					if(err){
-						console.log(err)
-					}else{
-						userInfo['name'] = data['name'];
-						userInfo['pic']  = data['pic'];
-						userInfo['rank'] = data['rank'];
-						userInfo['exp']  = data['exp'];
 
-						// use array! for the future 3, 4, 5 or more people!
-						userInfo['fight_with'] = [];
-						userInfo['right_num']  = 0;
-						userInfo['wrong_num']  = 0;
-						// add this user to waiting_fight_room hash list
-						var userWaitingNumber = tools.newWaitingUser(userId, userInfo);
+				if (typeof fightUsers[userId] === "undefined"){
+						// if fight users have no this user
+						client.hgetall('uid:' + msg.data, function(err, data){
+						if(err){
+							console.log(err)
+						}else{
+							userInfo['name'] = data['name'];
+							userInfo['pic']  = data['pic'];
+							userInfo['rank'] = data['rank'];
+							userInfo['exp']  = data['exp'];
 
-						// judge the waiting list length
-						// if people is enough to build fight room
-						if (userWaitingNumber >= ROOM_USER_LIMIT){
-							console.log('ready info fight room');
-							// get room obj
-							var room = tools.select_x_people_to_fight(ROOM_USER_LIMIT);
+							// use array! for the future 3, 4, 5 or more people!
+							userInfo['fight_with'] = [];
+							userInfo['right_num']  = 0;
+							userInfo['wrong_num']  = 0;
+							// add this user to waiting_fight_room hash list
+							var userWaitingNumber = tools.newWaitingUser(userId, userInfo);
 
-							tools.init_room_two(room, client);
+							// judge the waiting list length
+							// if people is enough to build fight room
+							if (userWaitingNumber >= ROOM_USER_LIMIT){
+								console.log('ready info fight room');
+								// get room obj
+								var room = tools.select_x_people_to_fight(ROOM_USER_LIMIT);
+
+								tools.init_room_two(room, client);
+							}
 						}
-					}
-				});
+					});
+
+				} else {
+					// if he disconnect just now, and he want to reconnect
+					fightUsers[userId]['connection'] = connection;
+				}
+				
 			} else if (msg['type'] === 'quit') {
 				tools.leaveWaiting(userId);
 				tools.end_fight(userId);
@@ -100,17 +109,17 @@ wsServer.on('request', function(request){
 
 	// user's network disconnect
 	connection.on('close', function(connection){
-		var waiting_users = tools.getWaitUser();
-		var fight_users   = tools.getFightUser();
-		if(typeof waiting_users[userId] === "undefined"){
-			if(typeof fight_users[userId] === "undefined"){
-				// nothing to do
-			} else {
-				tools.end_fight(userId);
-			}
+		var waitingUsers = tools.getWaitUser();
+		// var fightUsers   = tools.getFightUser();
+		if(typeof waitingUsers[userId] === "undefined"){
+			// if(typeof fightUsers[userId] === "undefined"){
+			// 	// nothing to do
+			// } else {
+			// 	// tools.end_fight(userId);
+			// }
 		} else {
 			tools.leaveWaiting(userId);
-			tools.end_fight(userId);
+			// tools.end_fight(userId);
 		}
 	});
 });
