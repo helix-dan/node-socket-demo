@@ -96,6 +96,8 @@ wsServer.on('request', function(request){
 
 	// user's network disconnect
 	connection.on('close', function(connection){
+		var waiting_users = tools.getWaitUser();
+		var fight_users   = tools.getFightUser();
 		if(typeof waiting_users[user_id] === "undefined"){
 			if(typeof fight_users[user_id] === "undefined"){
 				// nothing to do
