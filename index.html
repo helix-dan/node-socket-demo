@@ -2,6 +2,7 @@
 <html>
 	<head>
 	    <title>Node.js WebSocket Expo</title>
+	    <meta http-equiv=Content-Type content="text/html;charset=utf-8">
 	    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 	</head>
 	<style>
@@ -109,7 +110,7 @@
 		    	})
 
 		    	$(".answer").click(function(){
-		    		var ans = $(this).text();
+		    		var ans = $(this).attr("ans");
 		    		var send_info = {
 		    			type: 'answer',
 		    			data: {
@@ -156,10 +157,10 @@
 				<span id='two'></span>答对数量<span id='two_right'></span>答错数量<span id='two_wrong'></span>
 
 				<p id='question'></p><br />
-				<button id='btn_answer_a' class="answer"></button><br />
-				<button id='btn_answer_b' class="answer"></button><br />
-				<button id='btn_answer_c' class="answer"></button><br />
-				<button id='btn_answer_d' class="answer"></button><br />
+				<button id='btn_answer_a' class="answer" ans="1"></button><br />
+				<button id='btn_answer_b' class="answer" ans="2"></button><br />
+				<button id='btn_answer_c' class="answer" ans="3"></button><br />
+				<button id='btn_answer_d' class="answer" ans="4"></button><br />
 			</div>
 
 		</center>

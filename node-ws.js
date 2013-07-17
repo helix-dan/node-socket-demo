@@ -7,6 +7,8 @@ var server = http.createServer(function(request, response){
 	//...
 });
 
+process.title = 'node-challenge';
+
 var redisConf = {
 	host: '192.168.2.18',
 	port: 6379
@@ -41,8 +43,7 @@ wsServer.on('request', function(request){
 
 		if (message.type === 'utf8'){
 
-			var msg = JSON.parse(message.utf8Data)
-
+			var msg = JSON.parse(message.utf8Data);
 			// some user into fight room
 			if (msg['type'] === 'join'){
 				userId = msg.data;
