@@ -12,7 +12,7 @@
 			$(document).ready(function(){
 			    window.WebSocket = window.WebSocket || window.MozWebSocket;
 
-			    var connection = new WebSocket('ws://192.168.2.107:1339');
+			    var connection = new WebSocket('ws://192.168.2.167:1339');
 
 			    connection.onopen = function () {
 			        alert('Your connection is open and ready to use!');
@@ -27,19 +27,12 @@
 
 			    	if(msg.type === 'competitor'){
 			    		$("#oppo_info").show();
-			    		$("#fight_notice").text('你的对手是:' + msg.data.name);
-			    		$("#oppo_user_exp").text('他的渊博值:' + msg.data.exp);
+			    		$("#fight_notice").text('你的对手:' + JSON.stringify(msg));
 			    		$("#wait_fight").hide();
+			    		$("#leave_fight_btn").show();
 
 			    	} else if (msg.type === 'question'){
-			    		$("#one").text(msg.data['info'][0]['uid'])
-			    		$("#two").text(msg.data['info'][1]['uid'])
-
-			    		$("#one_right").text( msg.data['info'][0]['current'] );
-			    		$("#two_right").text( msg.data['info'][1]['current'] );
-
-			    		$("#one_wrong").text( msg.data['info'][0]['wrong'] );
-			    		$("#two_wrong").text( msg.data['info'][1]['wrong'] );
+			    		$("#question_info").text(JSON.stringify(msg));
 
 			    		if(msg.data.respondent === true){
 			    			// you can use the button
@@ -64,7 +57,8 @@
 			    	// 	alert('the people select: ' + msg.data['ans']);
 
 			    	} else if (msg.type === 'result'){
-			    		alert('胜利者是:'+msg.data['winner']+' 失败者是:'+msg.data['loser']);
+			    		$("#result").show();
+			    		$("#result_info").text(JSON.stringify(msg));
 
 			    		// change jquery status
 			    		$("#wait_fight").hide();
@@ -72,6 +66,7 @@
 			    		$("#fight_notice").text('');
 			    		$("#oppo_info").hide();
 			    		$("#battle_info").hide();
+			    		$("#leave_fight_btn").hide()
 			    	}
 
 			        $("#show").text(msg.data);
@@ -86,6 +81,7 @@
 		    		connection.send(JSON.stringify(send_info));
 		    		$("#wait_fight").show();
 		    		$("#btn_fight").attr('disabled', true);
+		    		$("#result").hide();
 		    	})
 
 		    	$("#leave_waiting_btn").click(function(){
@@ -102,8 +98,6 @@
 		    		var send_info = {
 		    			type: 'quit',
 		    			data: ''
-
-
 		    		}
 		    		connection.send(JSON.stringify(send_info));
 		    	})
@@ -114,7 +108,7 @@
 		    			type: 'answer',
 		    			data: {
 		    				ans: ans,
-		    				current: true
+		    				correct: true
 		    			}
 		    		}
 		    		connection.send(JSON.stringify(send_info));
@@ -126,6 +120,7 @@
 			<div id='select_mode'>
 				<input id='user_name'></input>
 				<button id='btn_fight'>战斗模式!</button>
+				<button id='leave_fight_btn' style='display:none'>离开战斗</button>
 			</div>
 			<br />
 
@@ -136,24 +131,15 @@
 				<br />
 				<button id='leave_waiting_btn'>离开等待</button>
 			</div>
-			<br />
-			============================================
 
-			
 			<div id='oppo_info' style='display:none'>
-				<p id='oppo_user_exp'></p>
+				===== 获取对手信息 =====
 				<p id='fight_notice'></p>
-				<button id='leave_fight_btn'>离开战斗</button>
 			</div>
-			<br />
-
-			===========================================
-
 
 			<div id='battle_info' style='display:none'>
-				双方答题情况
-				<p><span id='one'></span>答对数量<span id='one_right'></span>答错数量<span id='one_wrong'></span></p>
-				<span id='two'></span>答对数量<span id='two_right'></span>答错数量<span id='two_wrong'></span>
+			==== 双方答题情况 ====
+				<p id='question_info'></p>
 
 				<p id='question'></p><br />
 				<button id='btn_answer_a' class="answer"></button><br />
@@ -162,6 +148,12 @@
 				<button id='btn_answer_d' class="answer"></button><br />
 			</div>
 
+			<div id='result' style='display:none'>
+				==== 最终结果 ====
+				<p id='result_info'></p>
+			</div>
+
 		</center>
 	</body>
 </html>
+

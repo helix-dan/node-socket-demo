@@ -13,8 +13,8 @@ var redisConf = {
 }
 var client = redis.createClient(redisConf.port, redisConf.host);
 
-server.listen(3000, function(){
-	console.log('socket server listen on port 3000')
+server.listen(1339, function(){
+	console.log('socket server listen on port 1339')
 });
 
 var wsServer = new WebSocketServer({
@@ -53,26 +53,30 @@ wsServer.on('request', function(request){
 						if(err){
 							console.log(err)
 						}else{
-							userInfo['name'] = data['name'];
-							userInfo['pic']  = data['pic'];
-							userInfo['rank'] = data['rank'];
-							userInfo['exp']  = data['exp'];
+							if(data === null){
+								console.log('can not find user');
+							}else{
+								userInfo['name'] = data['name'];
+								userInfo['pic']  = data['pic'];
+								userInfo['rank'] = data['rank'];
+								userInfo['exp']  = data['exp'];
 
-							// use array! for the future 3, 4, 5 or more people!
-							userInfo['fight_with'] = [];
-							userInfo['right_num']  = 0;
-							userInfo['wrong_num']  = 0;
-							// add this user to waiting_fight_room hash list
-							var userWaitingNumber = tools.newWaitingUser(userId, userInfo);
+								// use array! for the future 3, 4, 5 or more people!
+								userInfo['fight_with'] = [];
+								userInfo['right_num']  = 0;
+								userInfo['wrong_num']  = 0;
+								// add this user to waiting_fight_room hash list
+								var userWaitingNumber = tools.newWaitingUser(userId, userInfo);
 
-							// judge the waiting list length
-							// if people is enough to build fight room
-							if (userWaitingNumber >= ROOM_USER_LIMIT){
-								console.log('ready info fight room');
-								// get room obj
-								var room = tools.selectXPeopleToFight(ROOM_USER_LIMIT);
+								// judge the waiting list length
+								// if people is enough to build fight room
+								if (userWaitingNumber >= ROOM_USER_LIMIT){
+									console.log('ready info fight room');
+									// get room obj
+									var room = tools.selectXPeopleToFight(ROOM_USER_LIMIT);
 
-								tools.initRoomTwo(room, client);
+									tools.initRoomTwo(room, client);
+								}
 							}
 						}
 					});
@@ -80,6 +84,10 @@ wsServer.on('request', function(request){
 				} else {
 					// if he disconnect just now, and he want to reconnect
 					fightUsers[userId]['connection'] = connection;
+					// get competitor info
+					tools.requestCompetitor(userId);
+					// send question
+					tools.requestQuestion(userId);
 				}
 				
 			} else if (msg['type'] === 'quit') {
@@ -88,7 +96,7 @@ wsServer.on('request', function(request){
 
 			} else if (msg['type'] === 'answer'){
 				// send answer status to another user
-				tools.sendStatusToAnother(userId, msg.data['ans'])
+				// tools.sendStatusToAnother(userId, msg.data['ans'])
 
 				// answer a question and check right answer
 				var go_on = tools.computePoint(userId, msg.data['ans']);
