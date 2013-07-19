@@ -56,6 +56,7 @@ wsServer.on('request', function(request){
 						}else{
 							if(data === null){
 								console.log('can not find user');
+								console.log(msg)
 							}else{
 								userInfo['name'] = data['name'];
 								userInfo['pic']  = data['pic'];
@@ -72,7 +73,6 @@ wsServer.on('request', function(request){
 								// judge the waiting list length
 								// if people is enough to build fight room
 								if (userWaitingNumber >= ROOM_USER_LIMIT){
-									console.log('ready info fight room');
 									// get room obj
 									var room = tools.selectXPeopleToFight(ROOM_USER_LIMIT);
 
@@ -96,17 +96,21 @@ wsServer.on('request', function(request){
 				tools.endFight(userId);
 
 			} else if (msg['type'] === 'answer'){
-				// send answer status to another user
-				// tools.sendStatusToAnother(userId, msg.data['ans'])
-
-				// answer a question and check right answer
-				var go_on = tools.computePoint(userId, msg.data['ans']);
-				if(go_on){
-					// go on battle
-					tools.goOnBattle(userId, client);
+				if(typeof fightUsers[userId] === 'undefined'){
+					// ...
 				} else {
-					// end the battle
-					tools.endFight(userId);
+					// send answer status to another user
+					// tools.sendStatusToAnother(userId, msg.data['ans'])
+
+					// answer a question and check right answer
+					var go_on = tools.computePoint(userId, msg.data['ans']);
+					if(go_on){
+						// go on battle
+						tools.goOnBattle(userId, client);
+					} else {
+						// end the battle
+						tools.endFight(userId);
+					}
 				}
 			}
 			
