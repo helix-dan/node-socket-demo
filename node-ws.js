@@ -7,16 +7,17 @@ var server = http.createServer(function(request, response){
 	//...
 });
 
-process.title = 'node-challenge';
+process.title = 'node-mi20-websocket-challenge';
 
 var redisConf = {
-	host: '192.168.2.18',
-	port: 6379
+	host: '42.121.1.23',
+	port: 6381
 }
+
 var client = redis.createClient(redisConf.port, redisConf.host);
 
-server.listen(1339, function(){
-	console.log('socket server listen on port 1339')
+server.listen(8889, function(){
+	console.log('socket server listen on port 8889')
 });
 
 var wsServer = new WebSocketServer({
@@ -40,48 +41,52 @@ wsServer.on('request', function(request){
 	var userId = '';
 
 	connection.on('message', function(message){
-
 		if (message.type === 'utf8'){
 
 			var msg = JSON.parse(message.utf8Data);
 			// some user into fight room
 			if (msg['type'] === 'join'){
-				userId = msg.data;
-
 				if (typeof fightUsers[userId] === "undefined"){
-						// if fight users have no this user
-						client.hgetall('uid:' + msg.data, function(err, data){
+					client.hgetall('sid:' + msg.data, function(err, sidData){
 						if(err){
-							console.log(err)
+							console.log(err);
 						}else{
-							if(data === null){
-								console.log('can not find user');
-								console.log(msg)
-							}else{
-								userInfo['name'] = data['name'];
-								userInfo['pic']  = data['pic'];
-								userInfo['rank'] = data['rank'];
-								userInfo['exp']  = data['exp'];
+							// if fight users have no this user
+							client.hgetall('uid:' + sidData['NUID'], function(err, data){
+								userId = msg.data;
+								if(err){
+									console.log(err)
+								}else{
+									if(data === null){
+										console.log('can not find user');
+										console.log(msg);
+									}else{
+										userInfo['name'] = data['name'];
+										userInfo['pic']  = data['pic'];
+										userInfo['rank'] = data['rank'];
+										userInfo['exp']  = data['exp'];
 
-								// use array! for the future 3, 4, 5 or more people!
-								userInfo['fight_with'] = [];
-								userInfo['right_num']  = 0;
-								userInfo['wrong_num']  = 0;
-								// add this user to waiting_fight_room hash list
-								var userWaitingNumber = tools.newWaitingUser(userId, userInfo);
+										// use array! for the future 3, 4, 5 or more people!
+										userInfo['fight_with'] = [];
+										userInfo['right_num']  = 0;
+										userInfo['wrong_num']  = 0;
+										// add this user to waiting_fight_room hash list
+										var userWaitingNumber = tools.newWaitingUser(userId, userInfo);
 
-								// judge the waiting list length
-								// if people is enough to build fight room
-								if (userWaitingNumber >= ROOM_USER_LIMIT){
-									// get room obj
-									var room = tools.selectXPeopleToFight(ROOM_USER_LIMIT);
+										// judge the waiting list length
+										// if people is enough to build fight room
+										if (userWaitingNumber >= ROOM_USER_LIMIT){
+											// get room obj
+											var room = tools.selectXPeopleToFight(ROOM_USER_LIMIT);
 
-									tools.initRoomTwo(room, client);
+											tools.initRoomTwo(room, client);
+										}
+									}
 								}
-							}
+							});
 						}
 					});
-
+					
 				} else {
 					// if he disconnect just now, and he want to reconnect
 					fightUsers[userId]['connection'] = connection;
