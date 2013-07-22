@@ -51,51 +51,66 @@ wsServer.on('request', function(request){
 						if(err){
 							console.log(err);
 						}else{
-							// if fight users have no this user
-							client.hgetall('uid:' + sidData['NUID'], function(err, data){
-								userId = msg.data;
-								if(err){
-									console.log(err)
-								}else{
-									if(data === null){
-										console.log('can not find user');
-										console.log(msg);
+							if(sidData  === null){
+								console.log('sid not found')
+							} else {
+								// if fight users have no this user
+								client.hgetall('uid:' + sidData['NUID'], function(err, data){
+									if(err){
+										console.log(err)
 									}else{
-										userInfo['name'] = data['name'];
-										userInfo['pic']  = data['pic'];
-										userInfo['rank'] = data['rank'];
-										userInfo['exp']  = data['exp'];
+										if(data === null){
+											console.log('can not find user');
+											console.log(msg);
+										}else{
+											userId = msg.data;
 
-										// use array! for the future 3, 4, 5 or more people!
-										userInfo['fight_with'] = [];
-										userInfo['right_num']  = 0;
-										userInfo['wrong_num']  = 0;
-										// add this user to waiting_fight_room hash list
-										var userWaitingNumber = tools.newWaitingUser(userId, userInfo);
+											if (typeof fightUsers[userId] === "undefined"){
+												userInfo['name'] = data['name'];
+												userInfo['pic']  = data['pic'];
+												userInfo['rank'] = data['rank'];
+												userInfo['exp']  = data['exp'];
 
-										// judge the waiting list length
-										// if people is enough to build fight room
-										if (userWaitingNumber >= ROOM_USER_LIMIT){
-											// get room obj
-											var room = tools.selectXPeopleToFight(ROOM_USER_LIMIT);
+												// use array! for the future 3, 4, 5 or more people!
+												userInfo['fight_with'] = [];
+												userInfo['right_num']  = 0;
+												userInfo['wrong_num']  = 0;
 
-											tools.initRoomTwo(room, client);
+												// add AI waiting timer
+												var aiTimer = setTimeout(function(){
+													tools.intoAIMode(userId)
+												}, 15000)
+
+												userInfo['ai_timer'] = aiTimer;
+
+												// add this user to waiting_fight_room hash list
+												var userWaitingNumber = tools.newWaitingUser(userId, userInfo);
+
+												// judge the waiting list length
+												// if people is enough to build fight room
+												if (userWaitingNumber >= ROOM_USER_LIMIT){
+													// get room obj
+													var room = tools.selectXPeopleToFight(ROOM_USER_LIMIT);
+
+													tools.initRoomTwo(room, client);
+												}
+
+											} else {
+												// if he disconnect just now, and he want to reconnect
+												fightUsers[userId]['connection'] = connection;
+												// get competitor info
+												tools.requestCompetitor(userId);
+												// send question
+												tools.requestQuestion(userId);
+											}
 										}
 									}
-								}
-							});
+								});
+							}
 						}
 					});
-					
-				} else {
-					// if he disconnect just now, and he want to reconnect
-					fightUsers[userId]['connection'] = connection;
-					// get competitor info
-					tools.requestCompetitor(userId);
-					// send question
-					tools.requestQuestion(userId);
 				}
-				
+
 			} else if (msg['type'] === 'quit') {
 				tools.leaveWaiting(userId);
 				tools.endFight(userId);
