@@ -31,15 +31,12 @@ var ROOM_USER_LIMIT = 2;
 wsServer.on('request', function(request){
 	var connection = request.accept(null, request.origin);
 
-	// get it for redis or client
-	// .... temp
 	var userInfo = {
 		room_id: null,
 		connection: connection
 	}
 
 	// temp user id
-	// redis replace it
 	var userId = '';
 
 	connection.on('message', function(message){
