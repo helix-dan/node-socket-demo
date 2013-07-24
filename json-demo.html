@@ -13,7 +13,8 @@
 			$(document).ready(function(){
 			    window.WebSocket = window.WebSocket || window.MozWebSocket;
 
-			    var connection = new WebSocket('ws://42.121.1.23:8889');
+			    // var connection = new WebSocket('ws://42.121.1.23:8889');
+			    var connection = new WebSocket('ws://192.168.2.167:8889');
 
 			    connection.onopen = function () {
 			        alert('Your connection is open and ready to use!');
@@ -104,12 +105,12 @@
 		    	})
 
 		    	$(".answer").click(function(){
-		    		var ans = $(this).text();
+		    		var ans = $(this).attr("ans");
 		    		var send_info = {
 		    			type: 'answer',
 		    			data: {
 		    				ans: ans,
-		    				correct: true
+		    				current: true
 		    			}
 		    		}
 		    		connection.send(JSON.stringify(send_info));
@@ -143,10 +144,10 @@
 				<p id='question_info'></p>
 
 				<p id='question'></p><br />
-				<button id='btn_answer_a' class="answer"></button><br />
-				<button id='btn_answer_b' class="answer"></button><br />
-				<button id='btn_answer_c' class="answer"></button><br />
-				<button id='btn_answer_d' class="answer"></button><br />
+				<button id='btn_answer_a' class="answer" ans="1"></button><br />
+				<button id='btn_answer_b' class="answer" ans="2"></button><br />
+				<button id='btn_answer_c' class="answer" ans="3"></button><br />
+				<button id='btn_answer_d' class="answer" ans="4"></button><br />
 			</div>
 
 			<div id='result' style='display:none'>

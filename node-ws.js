@@ -10,8 +10,10 @@ var server = http.createServer(function(request, response){
 process.title = 'node-mi20-websocket-challenge';
 
 var redisConf = {
-	host: '42.121.1.23',
-	port: 6381
+	// host: '42.121.1.23',
+	host: '192.168.2.18',
+	// port: 6381
+	port: 6379
 }
 
 var client = redis.createClient(redisConf.port, redisConf.host);
@@ -64,12 +66,12 @@ wsServer.on('request', function(request){
 											console.log(msg);
 										}else{
 											userId = msg.data;
-
 											if (typeof fightUsers[userId] === "undefined"){
 												userInfo['name'] = data['name'];
 												userInfo['pic']  = data['pic'];
 												userInfo['rank'] = data['rank'];
 												userInfo['exp']  = data['exp'];
+												userInfo['type'] = 'user';
 
 												// use array! for the future 3, 4, 5 or more people!
 												userInfo['fight_with'] = [];
@@ -78,7 +80,7 @@ wsServer.on('request', function(request){
 
 												// add AI waiting timer
 												var aiTimer = setTimeout(function(){
-													tools.intoAIMode(userId)
+													tools.intoAIMode(userId, client)
 												}, 15000)
 
 												userInfo['ai_timer'] = aiTimer;
