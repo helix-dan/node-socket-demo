@@ -77,14 +77,23 @@ wsServer.on('request', function(request){
 
 												// add AI waiting timer
 												var aiTimer = setTimeout(function(){
-													tools.intoAIMode(userId, client)
+													// 请后续人解决这件事情:
+													// Android没有处理好自己的退出机制，有时退出的时候会导致client app发生错误
+													// 如果该用户在这种情况下仍然继续用对战模式，则他的sid会更换一个
+													// 所以对应的uid也会不同
+													if(typeof waitingUsers[userId] === 'undefined'){
+														console.log('android client error!')
+													}else{
+														tools.intoAIMode(userId, client);
+													}
+
 												}, 10000)
 
 												userInfo['ai_timer'] = aiTimer;
 
 												// add this user to waiting_fight_room hash list
 												var userWaitingNumber = tools.newWaitingUser(userId, userInfo);
-
+												
 												// judge the waiting list length
 												// if people is enough to build fight room
 												if (userWaitingNumber >= ROOM_USER_LIMIT){
