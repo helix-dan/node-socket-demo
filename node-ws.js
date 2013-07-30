@@ -121,7 +121,7 @@ wsServer.on('request', function(request){
 
 			} else if (msg['type'] === 'quit') {
 				tools.leaveWaiting(userId);
-				tools.endFight(userId);
+				tools.endFight(userId, client);
 
 			} else if (msg['type'] === 'answer'){
 				if(typeof fightUsers[userId] === 'undefined'){
@@ -137,7 +137,7 @@ wsServer.on('request', function(request){
 						tools.goOnBattle(userId, client);
 					} else {
 						// end the battle
-						tools.endFight(userId);
+						tools.endFight(userId, client);
 					}
 				}
 			}
@@ -156,11 +156,11 @@ wsServer.on('request', function(request){
 			// if(typeof fightUsers[userId] === "undefined"){
 			// 	// nothing to do
 			// } else {
-			// 	// tools.endFight(userId);
+			// 	// tools.endFight(userId, client);
 			// }
 		} else {
 			tools.leaveWaiting(userId);
-			// tools.endFight(userId);
+			// tools.endFight(userId, client);
 		}
 	});
 });
