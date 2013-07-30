@@ -88,6 +88,8 @@ wsServer.on('request', function(request){
 													}
 												}, 10000)
 
+												//var aiTimer = setTimeout(function(){}, 10000)
+
 												userInfo['ai_timer'] = aiTimer;
 
 												// add this user to waiting_fight_room hash list
@@ -98,7 +100,7 @@ wsServer.on('request', function(request){
 												if (userWaitingNumber >= ROOM_USER_LIMIT){
 													// get room obj
 													var room = tools.selectXPeopleToFight(ROOM_USER_LIMIT);
-
+                                                    // 拿到房间，开始准备答题 顺序...
 													tools.initRoomTwo(room, client);
 												}
 
@@ -123,13 +125,16 @@ wsServer.on('request', function(request){
 				tools.endFight(userId, client);
 
 			} else if (msg['type'] === 'answer'){
+				// client 送答案上来了
 				if(typeof fightUsers[userId] === 'undefined'){
 					// ...
 				} else {
 					// send answer status to another user
+					// 让对方知道答题错误，并知道错误的答案，注： 市场暂时不需要这个功能，先拿掉
 					// tools.sendStatusToAnother(userId, msg.data['ans'])
 
 					// answer a question and check right answer
+					// 检查是否答对,答错 computePoint返回 false or true
 					var go_on = tools.computePoint(userId, msg.data['ans']);
 					if(go_on){
 						// go on battle
