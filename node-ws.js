@@ -86,7 +86,6 @@ wsServer.on('request', function(request){
 													}else{
 														tools.intoAIMode(userId, client);
 													}
-
 												}, 10000)
 
 												userInfo['ai_timer'] = aiTimer;
