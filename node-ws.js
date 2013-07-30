@@ -10,10 +10,10 @@ var server = http.createServer(function(request, response){
 process.title = 'node-mi20-websocket-challenge';
 
 var redisConf = {
-	host: '42.121.1.23',
-	// host: '192.168.2.18',
-	port: 6381
-	// port: 6379
+	// host: '42.121.1.23',
+	host: '192.168.2.18',
+	// port: 6381
+	port: 6379
 }
 
 var client = redis.createClient(redisConf.port, redisConf.host);
