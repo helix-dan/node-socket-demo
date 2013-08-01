@@ -85,7 +85,7 @@
 		    		$("#btn_fight").attr('disabled', true);
 		    		$("#result").hide();
 		    	})
-
+                 // 等待的时候离开
 		    	$("#leave_waiting_btn").click(function(){
 		    		var send_info = {
 		    			type: 'quit',
@@ -95,7 +95,7 @@
 		    		$("#btn_fight").attr('disabled', false);
 		    		$("#wait_fight").hide();
 		    	})
-
+                // 对战强制退出
 		    	$("#leave_fight_btn").click(function(){
 		    		var send_info = {
 		    			type: 'quit',

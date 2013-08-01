@@ -1,3 +1,4 @@
+// require modules
 var WebSocketServer = require('websocket').server;
 var redis 			= require('redis');
 var http            = require('http');
@@ -10,10 +11,10 @@ var server = http.createServer(function(request, response){
 process.title = 'node-mi20-websocket-challenge';
 
 var redisConf = {
-	// host: '42.121.1.23',
-	host: '192.168.2.18',
-	// port: 6381
-	port: 6379
+	host: '42.121.1.23',  // ali01
+	// host: '192.168.2.18',    // 2.18
+	port: 6381            // ali01 redis port
+	// port: 6379               // 2.18 redis port
 }
 
 var client = redis.createClient(redisConf.port, redisConf.host);
@@ -106,10 +107,13 @@ wsServer.on('request', function(request){
 
 											} else {
 												// if he disconnect just now, and he want to reconnect
+												// 断线重新链接的处理，置换connection对象
 												fightUsers[userId]['connection'] = connection;
 												// get competitor info
+												// 请求对方的信息
 												tools.requestCompetitor(userId);
 												// send question
+												// 请求对方的题目
 												tools.requestQuestion(userId);
 											}
 										}
@@ -153,6 +157,7 @@ wsServer.on('request', function(request){
 	});
 
 	// user's network disconnect
+	// 用于电脑浏览器窗口关闭时，清理战场; 手机端不存在这个问题
 	connection.on('close', function(connection){
 		var waitingUsers = tools.getWaitUser();
 		// var fightUsers   = tools.getFightUser();
